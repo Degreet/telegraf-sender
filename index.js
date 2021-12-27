@@ -62,7 +62,14 @@ module.exports = function sender(ctx, next) {
 							await ctx.telegram
 								.sendCopy(userId, message || ctx.message, extra)
 								.catch(console.error)
-							if (action) action(userId)
+
+							if (action) {
+								try {
+									await action(userId)
+								} catch {
+									action(userId)
+								}
+							}
 						})
 					)
 
@@ -86,7 +93,7 @@ module.exports = function sender(ctx, next) {
 
 		alert(text) {
 			try {
-				return ctx.answerCbQuery(text, { alert: true })
+				return ctx.answerCbQuery(text, true)
 			} catch (e) {
 				console.error(e)
 			}
