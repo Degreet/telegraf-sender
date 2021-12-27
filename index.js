@@ -34,7 +34,7 @@ module.exports = function sender(ctx, next) {
 
 		broadcast(params) {
 			try {
-				let { users, callback, action, extra, message } = params
+				let { users, callback, action, extra, message, isCopy = true } = params
 
 				if (!callback || typeof callback !== 'function') callback = null
 				if (!action || typeof action !== 'function') action = null
@@ -59,9 +59,15 @@ module.exports = function sender(ctx, next) {
 
 					await Promise.all(
 						usrs.map(async (userId) => {
-							await ctx.telegram
-								.sendCopy(userId, message || ctx.message, extra)
-								.catch(console.error)
+							if (isCopy) {
+								await ctx.telegram
+									.sendCopy(userId, message || ctx.message, extra)
+									.catch(console.error)
+							} else {
+								await ctx.telegram
+									.sendMessage(userId, message.text, { parse_mode: 'HTML', ...message.extra })
+									.catch(console.error)
+							}
 
 							if (action) {
 								try {
