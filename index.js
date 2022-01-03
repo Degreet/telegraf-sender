@@ -1,38 +1,38 @@
 module.exports = function sender(ctx, next) {
 	ctx.msg = {
-		send(text, extra) {
+		async send(text, extra) {
 			try {
-				return ctx.replyWithHTML(text, extra)
+				return await ctx.replyWithHTML(text, extra)
 			} catch (e) {
 				console.error(e)
 			}
 		},
 
-		sendTo(userId, text, extra) {
+		async sendTo(userId, text, extra) {
 			try {
-				return ctx.telegram.sendMessage(userId, text, { parse_mode: 'html', ...extra })
+				return await ctx.telegram.sendMessage(userId, text, { parse_mode: 'html', ...extra })
 			} catch (e) {
 				console.error(e)
 			}
 		},
 
-		edit(text, extra) {
+		async edit(text, extra) {
 			try {
-				return ctx.editMessageText(text, { parse_mode: 'html', ...extra })
+				return await ctx.editMessageText(text, { parse_mode: 'html', ...extra })
 			} catch (e) {
 				console.error(e)
 			}
 		},
 
-		del() {
+		async del() {
 			try {
-				return ctx.deleteMessage()
+				return await ctx.deleteMessage()
 			} catch (e) {
 				console.error(e)
 			}
 		},
 
-		broadcast(params) {
+		async broadcast(params) {
 			try {
 				let { users, callback, action, extra, message, isCopy = true } = params
 
@@ -89,17 +89,17 @@ module.exports = function sender(ctx, next) {
 			}
 		},
 
-		toast(text) {
+		async toast(text) {
 			try {
-				return ctx.answerCbQuery(text)
+				return await ctx.answerCbQuery(text)
 			} catch (e) {
 				console.error(e)
 			}
 		},
 
-		alert(text) {
+		async alert(text) {
 			try {
-				return ctx.answerCbQuery(text, true)
+				return await ctx.answerCbQuery(text, true)
 			} catch (e) {
 				console.error(e)
 			}
