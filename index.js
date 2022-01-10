@@ -59,21 +59,29 @@ module.exports = function sender(ctx, next) {
 
 					await Promise.all(
 						usrs.map(async (userId) => {
+							let isSuccess = true
+
 							if (isCopy) {
-								await ctx.telegram
-									.sendCopy(userId, message || ctx.message, extra)
-									.catch(console.error)
+								try {
+									await ctx.telegram.sendCopy(userId, message || ctx.message, extra)
+								} catch (e) {
+									isSuccess = false
+									console.error('TELEGRAF_SENDER failed send mail', e)
+								}
 							} else {
-								await ctx.telegram
-									.sendMessage(userId, message.text, { parse_mode: 'HTML', ...message.extra })
-									.catch(console.error)
+								try {
+									await ctx.telegram.sendMessage(userId, message.text, { parse_mode: 'HTML', ...message.extra })
+								} catch (e) {
+									isSuccess = false
+									console.error('TELEGRAF_SENDER failed send mail', e)
+								}
 							}
 
 							if (action) {
 								try {
-									await action(userId)
+									await action(userId, isSuccess)
 								} catch {
-									action(userId)
+									action(userId, isSuccess)
 								}
 							}
 						})
