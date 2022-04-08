@@ -1,35 +1,19 @@
 module.exports = function sender(ctx, next) {
 	ctx.msg = {
-		async send(text, extra) {
-			try {
-				return await ctx.replyWithHTML(text, extra)
-			} catch (e) {
-				console.error(e)
-			}
+		send(text, extra) {
+			return ctx.replyWithHTML(text, extra)
 		},
 
-		async sendTo(userId, text, extra) {
-			try {
-				return await ctx.telegram.sendMessage(userId, text, { parse_mode: 'html', ...extra })
-			} catch (e) {
-				console.error(e)
-			}
+		sendTo(userId, text, extra) {
+			return ctx.telegram.sendMessage(userId, text, { parse_mode: 'html', ...extra })
 		},
 
-		async edit(text, extra) {
-			try {
-				return await ctx.editMessageText(text, { parse_mode: 'html', ...extra })
-			} catch (e) {
-				console.error(e)
-			}
+		edit(text, extra) {
+			return ctx.editMessageText(text, { parse_mode: 'html', ...extra })
 		},
 
-		async del() {
-			try {
-				return await ctx.deleteMessage()
-			} catch (e) {
-				console.error(e)
-			}
+		del() {
+			return ctx.deleteMessage()
 		},
 
 		async broadcast(params) {
@@ -64,17 +48,11 @@ module.exports = function sender(ctx, next) {
 							if (isCopy) {
 								try {
 									await ctx.telegram.sendCopy(userId, message || ctx.message, extra)
-								} catch (e) {
-									isSuccess = false
-									console.error('TELEGRAF_SENDER failed send mail', e)
-								}
+								} catch (e) {}
 							} else {
 								try {
 									await ctx.telegram.sendMessage(userId, message.text, { parse_mode: 'HTML', ...message.extra })
-								} catch (e) {
-									isSuccess = false
-									console.error('TELEGRAF_SENDER failed send mail', e)
-								}
+								} catch (e) {}
 							}
 
 							if (action) {
@@ -97,20 +75,12 @@ module.exports = function sender(ctx, next) {
 			}
 		},
 
-		async toast(text) {
-			try {
-				return await ctx.answerCbQuery(text)
-			} catch (e) {
-				console.error(e)
-			}
+		toast(text) {
+			return ctx.answerCbQuery(text)
 		},
 
-		async alert(text) {
-			try {
-				return await ctx.answerCbQuery(text, true)
-			} catch (e) {
-				console.error(e)
-			}
+		alert(text) {
+			return ctx.answerCbQuery(text, true)
 		},
 	}
 
