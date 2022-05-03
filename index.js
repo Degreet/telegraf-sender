@@ -184,6 +184,8 @@ module.exports = function sender(ctx, next) {
 					case 'inline':
 						markup = Markup.inlineKeyboard(data.rows).extra()
 						break
+					default:
+						markup = Markup.removeKeyboard().extra()
 				}
 
 				return {
