@@ -1,11 +1,12 @@
 const { Markup } = require('telegraf')
+const { buildSelect } = require('./select-module')
 const layouts = {}
 
 module.exports = (ctx) => (layoutName, useI18n) => {
   let data = {
     rows: [],
     unresolvedBtns: [],
-    allowedBtnTypes: ['callback', 'reply', 'url', 'login', 'cb', 'r'],
+    allowedBtnTypes: ['callback', 'reply', 'url', 'login', 'cb', 'r', 'select'],
     extra: {},
   }
 
@@ -30,6 +31,9 @@ module.exports = (ctx) => (layoutName, useI18n) => {
           break
         case 'webApp':
           btn = { text, web_app: { url: action } }
+          break
+        case 'select':
+          btn = { text, id: action }
           break
         default:
           btn = text
@@ -57,6 +61,7 @@ module.exports = (ctx) => (layoutName, useI18n) => {
       })
 
       data.rows.push(...result)
+      data.unresolvedBtns = []
       return data
     },
     saveLayout: () => {
@@ -94,6 +99,22 @@ module.exports = (ctx) => (layoutName, useI18n) => {
         ...extra,
       }
 
+      return data
+    },
+    useSelectModule: ({ id, multiple, btnsPerLine = 2, selectFlag = '✅' }) => {
+      if (!ctx) return
+
+      const { btns, selectId } = buildSelect(
+        ctx.from && ctx.from.id,
+        data.unresolvedBtns,
+        { id, selectFlag, multiple }
+      )
+
+      data.unresolvedBtns = btns.map((btn) => (
+        Markup.callbackButton(btn.text, `select_${selectId}_${btn.id}`)
+      ))
+
+      methods.genRows(btnsPerLine)
       return data
     },
     end: (type) => {
