@@ -34,8 +34,15 @@ module.exports = (ctx) => ({
         else resultUsers.push([userId])
       })
 
-      function end() {
-        if (callback) callback()
+      async function end() {
+        if (callback) {
+          try {
+            await callback()
+          } catch (e) {
+            callback()
+          }
+        }
+
         return true
       }
 
