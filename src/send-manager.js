@@ -71,7 +71,7 @@ module.exports = (ctx) => ({
         return setTimeout(step, Math.max(0, startedAt + 1000 - Date.now()))
       }
 
-      step()
+      await step()
       return true
     } catch (e) {
       console.error(e)

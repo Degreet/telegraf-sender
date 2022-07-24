@@ -6,7 +6,7 @@ module.exports = (ctx) => (layoutName, useI18n) => {
   let data = {
     rows: [],
     unresolvedBtns: [],
-    allowedBtnTypes: ['callback', 'reply', 'url', 'login', 'cb', 'r', 'select'],
+    allowedBtnTypes: ['callback', 'reply', 'text', 'url', 'login', 'cb', 'r', 'select'],
     extra: {},
   }
 

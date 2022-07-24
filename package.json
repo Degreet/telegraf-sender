@@ -1,6 +1,6 @@
 {
   "name": "telegraf-sender",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "Упрощенная работа с сообщениями и клавиатурой в Telegraf v3.39",
   "main": "index.js",
   "scripts": {
