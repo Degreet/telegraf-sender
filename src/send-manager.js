@@ -49,7 +49,11 @@ module.exports = (ctx) => ({
       async function step() {
         const startedAt = Date.now()
         const usrs = resultUsers[activeUsersIndex++]
-        if (!usrs || usrs.length <= 0) return end()
+
+        if (!usrs || usrs.length <= 0) {
+          await end()
+          return true
+        }
 
         await Promise.all(
           usrs.map(async (userId) => {
@@ -75,7 +79,11 @@ module.exports = (ctx) => ({
           })
         )
 
-        return setTimeout(step, Math.max(0, startedAt + 1000 - Date.now()))
+        return new Promise((resolve) => {
+          setTimeout(async () => {
+            resolve(await step())
+          }, Math.max(0, startedAt + 1000 - Date.now()))
+        })
       }
 
       await step()
