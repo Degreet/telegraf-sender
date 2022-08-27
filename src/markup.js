@@ -6,7 +6,7 @@ module.exports = (ctx) => (layoutName, useI18n) => {
   let data = {
     rows: [],
     unresolvedBtns: [],
-    allowedBtnTypes: ['callback', 'reply', 'text', 'url', 'login', 'cb', 'r', 'select'],
+    allowedBtnTypes: ['callback', 'reply', 'text', 'url', 'login', 'cb', 'r', 'select', 'contact'],
     extra: {},
   }
 
@@ -28,6 +28,9 @@ module.exports = (ctx) => (layoutName, useI18n) => {
           break
         case 'switchToChat':
           btn = Markup.switchToChatButton(text, action)
+          break
+        case 'contact':
+          btn = Markup.contactRequestButton(text)
           break
         case 'webApp':
           btn = { text, web_app: { url: action } }
@@ -117,22 +120,25 @@ module.exports = (ctx) => (layoutName, useI18n) => {
       methods.genRows(btnsPerLine)
       return data
     },
-    end: (type) => {
+    end: (type, oneTime = false, resize = true) => {
       let markup
 
       switch (type) {
         case 'reply':
-          markup = Markup.keyboard(data.rows).extra()
+          markup = Markup.keyboard(data.rows)
           break
         case 'inline':
-          markup = Markup.inlineKeyboard(data.rows).extra()
+          markup = Markup.inlineKeyboard(data.rows)
           break
         default:
-          markup = Markup.removeKeyboard().extra()
+          markup = Markup.removeKeyboard()
       }
 
+      if (oneTime) markup = markup.oneTime()
+      if (resize) markup = markup.resize()
+
       return {
-        ...markup,
+        ...markup.extra(),
         ...data.extra,
       }
     },
