@@ -6,7 +6,7 @@ module.exports = (ctx) => (layoutName, useI18n) => {
   let data = {
     rows: [],
     unresolvedBtns: [],
-    allowedBtnTypes: ['callback', 'reply', 'text', 'url', 'login', 'cb', 'r', 'select', 'contact'],
+    allowedBtnTypes: ['callback', 'reply', 'text', 'url', 'login', 'cb', 'r', 'select', 'contact', 'location'],
     extra: {},
   }
 
@@ -31,6 +31,9 @@ module.exports = (ctx) => (layoutName, useI18n) => {
           break
         case 'contact':
           btn = Markup.contactRequestButton(text)
+          break
+        case 'location':
+          btn = Markup.locationRequestButton(text)
           break
         case 'webApp':
           btn = { text, web_app: { url: action } }
