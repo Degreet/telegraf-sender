@@ -62,11 +62,15 @@ module.exports = (ctx) => ({
             if (isCopy) {
               try {
                 await ctx.telegram.sendCopy(userId, message || ctx.message, extra)
-              } catch (e) {}
+              } catch (e) {
+                isSuccess = false
+              }
             } else {
               try {
                 await ctx.telegram.sendMessage(userId, message.text, { parse_mode: 'HTML', ...message.extra })
-              } catch (e) {}
+              } catch (e) {
+                isSuccess = false
+              }
             }
 
             if (action) {
