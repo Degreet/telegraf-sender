@@ -108,6 +108,27 @@ await ctx.msg.broadcast({
 });
 ```
 
+
+Сообщений с документом (Например, гифка):
+
+```javascript
+await ctx.msg.broadcast({
+  users: [1, 2, 3],
+  isCopy: false,
+  message: {
+    type: 'document',
+    
+    // либо file_id уже существующего документа на серверах Telegram
+    file_id: file_id,
+    
+    // или прямую ссылку на документ (Например, гифка)
+    source: path,
+    
+    extra: { parse_mode: 'HTML', ...markup, caption: 'Текст рассылки' },
+  },
+});
+```
+
 Если написать isCopy: true, тогда последнее отправленное пользователем сообщение будет скопировано
 
 # Информация
