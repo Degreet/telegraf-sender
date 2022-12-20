@@ -3,9 +3,9 @@
 Чтобы начать работу с модулем, Вам необходимо импортировать и инициализировать его:
 
 ```javascript
-const sender = require('telegraf-sender')
-const bot = new Telegraf(token)
-bot.use(sender)
+const sender = require('telegraf-sender');
+const bot = new Telegraf(token);
+bot.use(sender);
 ```
 
 # Отправка сообщений
@@ -13,13 +13,13 @@ bot.use(sender)
 ### Текущему пользователю
 
 ```javascript
-ctx.msg.send(text, extra)
+ctx.msg.send(text, extra);
 ```
 
 ### Пользователю с другим id
 
 ```javascript
-ctx.msg.sendTo(userId, text, extra)
+ctx.msg.sendTo(userId, text, extra);
 ```
 
 # Всплывающие уведомления
@@ -27,13 +27,13 @@ ctx.msg.sendTo(userId, text, extra)
 ### Alert
 
 ```javascript
-ctx.msg.alert('Пример модального окна')
+ctx.msg.alert('Пример модального окна');
 ```
 
 ### Toast
 
 ```javascript
-ctx.msg.toast('Всплывающее уведомление')
+ctx.msg.toast('Всплывающее уведомление');
 ```
 
 # Изменение сообщений
@@ -41,7 +41,7 @@ ctx.msg.toast('Всплывающее уведомление')
 Для этого воспользуйтесь методом edit:
 
 ```javascript
-ctx.msg.edit(text, extra)
+ctx.msg.edit(text, extra);
 ```
 
 # Удаление сообщений
@@ -49,20 +49,63 @@ ctx.msg.edit(text, extra)
 Для этого воспользуйтесь методом del:
 
 ```javascript
-ctx.msg.del()
+ctx.msg.del();
 ```
 
 # Рассылка сообщений
+
+Обычных текстовых сообщений:
 
 ```javascript
 await ctx.msg.broadcast({
   users: [1, 2, 3],
   isCopy: false,
   message: {
+    type: 'text',
     text: 'Текст рассылки',
     extra: { parse_mode: 'HTML', ...markup },
   },
-})
+});
+```
+
+Сообщений с фотографиями:
+
+```javascript
+await ctx.msg.broadcast({
+  users: [1, 2, 3],
+  isCopy: false,
+  message: {
+    type: 'photo',
+    
+    // либо file_id уже существующего фото на серверах Telegram
+    file_id: file_id,
+    
+    // или прямую ссылку на фото
+    source: path,
+    
+    extra: { parse_mode: 'HTML', ...markup, caption: 'Текст рассылки' },
+  },
+});
+```
+
+Сообщений с видео:
+
+```javascript
+await ctx.msg.broadcast({
+  users: [1, 2, 3],
+  isCopy: false,
+  message: {
+    type: 'video',
+    
+    // либо file_id уже существующего видео на серверах Telegram
+    file_id: file_id,
+    
+    // или прямую ссылку на видео
+    source: path,
+    
+    extra: { parse_mode: 'HTML', ...markup, caption: 'Текст рассылки' },
+  },
+});
 ```
 
 Если написать isCopy: true, тогда последнее отправленное пользователем сообщение будет скопировано
