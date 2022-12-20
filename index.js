@@ -3,7 +3,7 @@ const sendManager = require ('./src/send-manager')
 const selectModule = require('./src/select-module')
 
 const middleware = () => (ctx, next) => {
-	const userId = ctx.from && ctx.from.id
+	const userId = ctx.from?.id
 	if (!userId) return
 
 	ctx.msg = sendManager(ctx)
