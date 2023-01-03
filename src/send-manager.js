@@ -21,7 +21,7 @@ module.exports = (ctx) => ({
 
   async broadcast(params) {
     try {
-      let { users, callback, action, extra, message, isCopy = true } = params
+      let { users, callback, action, extra, message, isCopy = true, handler } = params
 
       if (!callback || typeof callback !== 'function') callback = null
       if (!action || typeof action !== 'function') action = null
@@ -49,6 +49,7 @@ module.exports = (ctx) => ({
       async function step() {
         const startedAt = Date.now()
         const usrs = resultUsers[activeUsersIndex++]
+        let arg
 
         if (!usrs || usrs.length <= 0) {
           await end()
@@ -58,7 +59,7 @@ module.exports = (ctx) => ({
         await Promise.all(
           usrs.map(async (userId) => {
             let isSuccess = true
-            const { type } = message;
+            const { type } = message
 
             if (isCopy) {
               try {
@@ -68,25 +69,22 @@ module.exports = (ctx) => ({
               }
             } else {
               try {
-                switch(type) {
-                  case 'photo': {
-                    await ctx.telegram.sendPhoto(userId, message.file_id || message.source, { ...message.extra })
-                    break;
+                if (!handler) {
+                  switch (type) {
+                    case 'photo':
+                      arg = await ctx.telegram.sendPhoto(userId, message.file_id || message.source, message.extra)
+                      break
+                    case 'video':
+                      arg = await ctx.telegram.sendVideo(userId, message.file_id || message.source, message.extra)
+                      break
+                    case 'document':
+                      arg = await ctx.telegram.sendDocument(userId, message.file_id || message.source, message.extra)
+                      break
+                    default:
+                      arg = await ctx.telegram.sendMessage(userId, message.text, { parse_mode: 'HTML', ...(message.extra || {}) })
                   }
-                  
-                  case 'video': {
-                    await ctx.telegram.sendVideo(userId, message.file_id || message.source, { ...message.extra })
-                    break;
-                  }
-
-                  case 'document': {
-                    await ctx.telegram.sendDocument(userId, message.file_id || message.source, { ...message.extra })
-                    break;
-                  }
-                  
-                  default: {
-                    await ctx.telegram.sendMessage(userId, message.text, { parse_mode: 'HTML', ...message.extra })
-                  }
+                } else {
+                  arg = await handler(userId)
                 }
               } catch (e) {
                 isSuccess = false
@@ -95,12 +93,12 @@ module.exports = (ctx) => ({
 
             if (action) {
               try {
-                await action(userId, isSuccess)
+                await action(userId, isSuccess, arg)
               } catch {
-                action(userId, isSuccess)
+                action(userId, isSuccess, arg)
               }
             }
-          })
+          }),
         )
 
         return new Promise((resolve) => {
