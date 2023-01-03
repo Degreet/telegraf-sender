@@ -58,6 +58,7 @@ module.exports = (ctx) => ({
         await Promise.all(
           usrs.map(async (userId) => {
             let isSuccess = true
+            const { type } = message;
 
             if (isCopy) {
               try {
@@ -67,7 +68,26 @@ module.exports = (ctx) => ({
               }
             } else {
               try {
-                await ctx.telegram.sendMessage(userId, message.text, { parse_mode: 'HTML', ...message.extra })
+                switch(type) {
+                  case 'photo': {
+                    await ctx.telegram.sendPhoto(userId, message.file_id || message.source, { ...message.extra })
+                    break;
+                  }
+                  
+                  case 'video': {
+                    await ctx.telegram.sendVideo(userId, message.file_id || message.source, { ...message.extra })
+                    break;
+                  }
+
+                  case 'document': {
+                    await ctx.telegram.sendDocument(userId, message.file_id || message.source, { ...message.extra })
+                    break;
+                  }
+                  
+                  default: {
+                    await ctx.telegram.sendMessage(userId, message.text, { parse_mode: 'HTML', ...message.extra })
+                  }
+                }
               } catch (e) {
                 isSuccess = false
               }
