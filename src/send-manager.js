@@ -59,7 +59,6 @@ module.exports = (ctx) => ({
         await Promise.all(
           usrs.map(async (userId) => {
             let isSuccess = true
-            const { type } = message
 
             if (isCopy) {
               try {
@@ -70,7 +69,7 @@ module.exports = (ctx) => ({
             } else {
               try {
                 if (!handler) {
-                  switch (type) {
+                  switch (message.type) {
                     case 'photo':
                       arg = await ctx.telegram.sendPhoto(userId, message.file_id || message.source, message.extra)
                       break
